@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Co-Parenting Schedule 2026-27</title>
+<style>
+  :root{ --line:#e5e7eb; --muted:#6b7280; --bg:#f7f7f8; --card:#fff; --ink:#1f2937; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.45}
+  .wrap{max-width:980px;margin:0 auto;padding:16px}
+  h1{font-size:22px;margin:0}
+  h2{font-size:16px;margin:0}
+  .sub{color:var(--muted);font-size:14px}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .between{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px}
+  .pad{padding:14px}
+  .mb{margin-bottom:16px}
+  button{font:inherit;cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 12px;color:var(--ink)}
+  button:hover{background:#f3f4f6}
+  button.primary{background:#1f2937;color:#fff;border-color:#1f2937}
+  button.go{background:#4f46e5;color:#fff;border-color:#4f46e5}
+  button.ok{background:#059669;color:#fff;border-color:#059669}
+  button.sm{padding:5px 9px;font-size:13px}
+  button.sel{background:#1f2937;color:#fff;border-color:#1f2937}
+  button.link{border:none;background:none;color:#2563eb;padding:2px 4px}
+  button.del{border:none;background:none;color:#dc2626;padding:4px}
+  input,select{font:inherit;border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:#fff;color:var(--ink)}
+  input[type=color]{padding:2px;height:36px;width:100%}
+  label.f{display:block;font-size:13px;color:#374151}
+  label.f input{margin-top:4px;width:100%}
+  .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:13px;background:#fff}
+  .chip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:4px 9px;font-size:12px;color:var(--muted)}
+  .swatch{width:14px;height:14px;border-radius:4px;display:inline-block}
+  .tiny{font-size:12px;color:var(--muted)}
+  .note{font-size:12px;background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:8px}
+  .warn{background:#fffbeb;border-color:#fde68a;color:#92400e}
+  .info{background:#eef2ff;border-color:#c7d2fe;color:#3730a3}
+  .err{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  @media(max-width:640px){.grid2,.grid3{grid-template-columns:1fr}}
+  .month{overflow:hidden}
+  .mhead{padding:9px 14px;border-bottom:1px solid var(--line);background:#fafafa}
+  .dow{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:11px;color:#9ca3af;border-bottom:1px solid var(--line)}
+  .dow div{padding:6px 0}
+  .cells{display:grid;grid-template-columns:repeat(7,1fr)}
+  .cell{position:relative;min-height:62px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:3px 3px 3px 6px;overflow:hidden}
+  .cell .acc{position:absolute;left:0;top:0;height:100%;width:4px}
+  .cell .top{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;color:#374151}
+  .cell .hl{font-size:9px;line-height:1.1;color:#4b5563;font-weight:600;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+  .cell .ics{display:flex;gap:3px;margin-top:2px;flex-wrap:wrap}
+  .cell.noschool{box-shadow:inset 0 -3px 0 rgba(120,120,120,.32)}
+  .empty{min-height:62px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);background:#fcfcfc}
+  .ico{width:13px;height:13px;display:inline-block;vertical-align:middle}
+  ul.changes{margin:6px 0 10px;padding-left:18px;font-size:14px}
+  ul.changes li{margin:1px 0}
+  .keychip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 9px;font-size:12px;border:1px solid}
+  .kon{background:#ecfdf5;border-color:#a7f3d0;color:#047857}
+  .koff{background:#f9fafb;border-color:#e5e7eb;color:#9ca3af}
+  @media print{ .noprint{display:none!important} body{background:#fff} .month{break-inside:avoid} .wrap{max-width:none} }
+</style>
+</head>
+<body>
+<div class="wrap"><div id="app">Loading...</div></div>
+
+<script>
+/* ============================================================
+   CONFIG - fill these two in (see the in-app setup screen)
+   ============================================================ */
+var CONFIG = {
+  BIN_ID: "6a331173f5f4af5e2904b032",
+  ACCESS_KEY: "$2a$10$OlBgdMtLK19r72en8399peeWft8Em6LK58XpFbiaX4YMMtfJrlWpO"
+};
+/* ============================================================ */
+
+var MS=86400000;
+function pad(n){return String(n).padStart(2,"0");}
+function dkey(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
+function mondayOf(d){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());var w=x.getDay();x.setDate(x.getDate()+(w===0?-6:1-w));return x;}
+var ANCHOR=mondayOf(new Date(2026,7,3));
+function widx(d){return Math.round((mondayOf(d)-ANCHOR)/(7*MS));}
+function baseOwner(d,cfg){var w=d.getDay();
+  if(w===1||w===2)return cfg.aFixedPair==="monTue"?"A":"B";
+  if(w===3||w===4)return cfg.aFixedPair==="wedThu"?"A":"B";
+  var wi=((widx(d)%2)+2)%2,ev=cfg.firstWeekendOwner;return wi===0?ev:(ev==="A"?"B":"A");}
+function rgba(hex,a){var h=hex.replace("#","");return"rgba("+parseInt(h.slice(0,2),16)+","+parseInt(h.slice(2,4),16)+","+parseInt(h.slice(4,6),16)+","+a+")";}
+function deep(o){return JSON.parse(JSON.stringify(o));}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+var MONTHS=[];for(var _i=0;_i<12;_i++){MONTHS.push({m:(7+_i)%12,y:7+_i<12?2026:2027});}
+var MN=["January","February","March","April","May","June","July","August","September","October","November","December"];
+var DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+var I={
+  key:'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.5 12.5 21 2m-4 0 3 3m-6 3 3 3"/></svg>',
+  swap:'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3 4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg>',
+  school:'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 6 8-3 8 3-8 3-8-3Z"/><path d="M4 6v5c0 2 4 4 8 4s8-2 8-4V6"/></svg>',
+  star:'<svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19l1-5.8L3.5 9.2l5.9-.9z"/></svg>',
+  gift:'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="4"/><path d="M12 8v13M5 12v9h14v-9M12 8S10 3 7.5 3 5 6 5 6s2 2 7 2 7-2 7-2-0-3-2.5-3S12 8 12 8Z"/></svg>'
+};
+
+var DEFAULT_HOLIDAYS=[
+ {id:"sep07",start:"2026-09-07",end:"2026-09-07",label:"Labor Day",owner:"rotation"},
+ {id:"sep21",start:"2026-09-21",end:"2026-09-21",label:"Yom Kippur",owner:"rotation"},
+ {id:"oct14",start:"2026-10-14",end:"2026-10-14",label:"Conferences",owner:"rotation"},
+ {id:"oct15",start:"2026-10-15",end:"2026-10-16",label:"MEA break",owner:"rotation"},
+ {id:"nov03",start:"2026-11-03",end:"2026-11-03",label:"PD / Election Day",owner:"rotation"},
+ {id:"nov13",start:"2026-11-13",end:"2026-11-13",label:"Record keeping",owner:"rotation"},
+ {id:"nov25",start:"2026-11-25",end:"2026-11-27",label:"Thanksgiving break",owner:"rotation"},
+ {id:"dec21",start:"2026-12-21",end:"2027-01-01",label:"Winter break",owner:"rotation"},
+ {id:"jan18",start:"2027-01-18",end:"2027-01-18",label:"MLK Day",owner:"rotation"},
+ {id:"jan29",start:"2027-01-29",end:"2027-01-29",label:"Record keeping",owner:"rotation"},
+ {id:"feb12",start:"2027-02-12",end:"2027-02-12",label:"Conferences",owner:"rotation"},
+ {id:"feb15",start:"2027-02-15",end:"2027-02-15",label:"Presidents' Day",owner:"rotation"},
+ {id:"mar10",start:"2027-03-10",end:"2027-03-10",label:"Eid al-Fitr",owner:"rotation"},
+ {id:"apr02",start:"2027-04-02",end:"2027-04-02",label:"Record keeping",owner:"rotation"},
+ {id:"apr05",start:"2027-04-05",end:"2027-04-09",label:"Spring break",owner:"rotation"},
+ {id:"may31",start:"2027-05-31",end:"2027-05-31",label:"Memorial Day",owner:"rotation"}
+];
+var DEFAULT_SPECIAL=[
+ {id:"first",date:"2026-09-08",label:"First day of school"},
+ {id:"last",date:"2027-06-11",label:"Last day of school"}
+];
+var DEFAULT_CFG={parentAName:"Jared",parentBName:"Anna",aColor:"#4f46e5",bColor:"#d97706",aFixedPair:"monTue",firstWeekendOwner:"A",exchangeTime:"After school / 5:00 PM"};
+
+function configured(){return CONFIG.BIN_ID&&CONFIG.ACCESS_KEY;}
+function apiRead(){
+  return fetch("https://api.jsonbin.io/v3/b/"+CONFIG.BIN_ID+"/latest",{headers:{"X-Access-Key":CONFIG.ACCESS_KEY,"X-Bin-Meta":"false"}})
+    .then(function(r){if(!r.ok)throw new Error("Read failed ("+r.status+"). Check your Bin ID / Access Key.");return r.json();});
+}
+function apiWrite(data){
+  return fetch("https://api.jsonbin.io/v3/b/"+CONFIG.BIN_ID,{method:"PUT",headers:{"Content-Type":"application/json","X-Access-Key":CONFIG.ACCESS_KEY},body:JSON.stringify(data)})
+    .then(function(r){if(!r.ok)throw new Error("Save failed ("+r.status+"). Your Access Key needs Update permission.");return r.json();});
+}
+
+var state={phase:"loading",role:localStorage.getItem("coparentRole")||null,shared:null,draft:null,draftNote:"",
+  setup:null,setupRole:"A",open:{settings:false,act:false,spec:false,hol:false},lastSync:null,errorMsg:""};
+var app=document.getElementById("app");
+
+function init(){
+  if(!configured()){state.phase="config";render();return;}
+  apiRead().then(function(data){
+    if(data&&data.committed){state.shared=data;state.phase="main";state.lastSync=new Date();}
+    else{state.setup={cfg:deep(DEFAULT_CFG),activities:[],special:deep(DEFAULT_SPECIAL),holidays:deep(DEFAULT_HOLIDAYS)};state.phase="setup";}
+    render();startPoll();
+  }).catch(function(e){state.errorMsg=e.message;state.phase="error";render();});
+}
+function startPoll(){
+  setInterval(function(){
+    if(state.phase!=="main"||state.draft||document.visibilityState!=="visible"||!configured())return;
+    apiRead().then(function(d){if(d&&d.committed){state.shared=d;state.lastSync=new Date();render();}}).catch(function(){});
+  },12000);
+}
+function syncNow(){apiRead().then(function(d){if(d&&d.committed){state.shared=d;state.lastSync=new Date();render();}}).catch(function(e){alert(e.message);});}
+function saveShared(next){state.shared=next;render();return apiWrite(next).catch(function(e){alert(e.message);});}
+function setRole(r){state.role=r;localStorage.setItem("coparentRole",r);render();}
+
+function viewData(){return state.draft||state.shared.committed;}
+function buildMaps(v){
+  var ov={},hl={},sp={};
+  v.holidays.forEach(function(h){if(!h.start||!h.end)return;var d=new Date(h.start+"T00:00:00"),e=new Date(h.end+"T00:00:00");
+    while(d<=e){var k=dkey(d);(hl[k]=hl[k]||[]).push(h.label);if(h.owner==="A"||h.owner==="B")ov[k]=h.owner;d=new Date(+d+MS);}});
+  v.special.forEach(function(s){if(s.date)(sp[s.date]=sp[s.date]||[]).push(s.label);});
+  return{ov:ov,hl:hl,sp:sp};
+}
+
+function summarize(base,snap){
+  var o=[],sc=snap.cfg,bc=base.cfg;
+  function nm(x){return x==="A"?sc.parentAName:x==="B"?sc.parentBName:x;}
+  if(bc.aFixedPair!==sc.aFixedPair)o.push(esc(sc.parentAName)+" now has "+(sc.aFixedPair==="monTue"?"Mon/Tue":"Wed/Thu"));
+  if(bc.firstWeekendOwner!==sc.firstWeekendOwner)o.push("First weekend -> "+esc(nm(sc.firstWeekendOwner)));
+  if(bc.exchangeTime!==sc.exchangeTime)o.push('Exchange time -> "'+esc(sc.exchangeTime)+'"');
+  if(bc.parentAName!==sc.parentAName)o.push("Name -> "+esc(sc.parentAName));
+  if(bc.parentBName!==sc.parentBName)o.push("Name -> "+esc(sc.parentBName));
+  if(bc.aColor!==sc.aColor||bc.bColor!==sc.bColor)o.push("Colors updated");
+  function dl(a,b,kind,fmt){var am={},bm={};a.forEach(function(x){am[x.id]=x;});b.forEach(function(x){bm[x.id]=x;});
+    b.forEach(function(x){if(!am[x.id])o.push("Added "+kind+": "+esc(fmt(x)));else if(JSON.stringify(am[x.id])!==JSON.stringify(x))o.push("Changed "+kind+": "+esc(fmt(x)));});
+    a.forEach(function(x){if(!bm[x.id])o.push("Removed "+kind+": "+esc(fmt(x)));});}
+  dl(base.activities,snap.activities,"activity",function(x){return x.label+" ("+DOW[x.weekday]+")";});
+  dl(base.special,snap.special,"date",function(x){return x.label+(x.date?" "+x.date:"");});
+  var am={};base.holidays.forEach(function(x){am[x.id]=x;});
+  snap.holidays.forEach(function(x){var old=am[x.id];
+    if(!old)o.push("Added no-school day: "+esc(x.label));
+    else if(old.owner!==x.owner)o.push(esc(x.label)+": "+(x.owner==="rotation"?"back to normal rotation":esc(nm(x.owner))+" has the kids"));
+    else if(JSON.stringify(old)!==JSON.stringify(x))o.push("Edited: "+esc(x.label));});
+  base.holidays.forEach(function(x){if(!snap.holidays.find(function(y){return y.id===x.id;}))o.push("Removed: "+esc(x.label));});
+  return o;
+}
+
+function startProposal(){var c=state.shared.committed;state.draft={cfg:deep(c.cfg),activities:deep(c.activities),special:deep(c.special),holidays:deep(c.holidays)};state.draftNote="";state.open={settings:false,act:false,spec:false,hol:false};render();}
+function cancelDraft(){state.draft=null;state.draftNote="";render();}
+function submitProposal(){
+  if(!state.role){alert("Claim your key first (top of page).");return;}
+  apiRead().then(function(s){
+    var p={id:"p"+Date.now(),author:state.role,note:state.draftNote.trim(),baseVersion:s.committed.version,createdAt:Date.now(),snapshot:state.draft,approvals:{A:false,B:false}};
+    p.approvals[state.role]=true;
+    s.proposals=(s.proposals||[]).filter(function(x){return x.author!==state.role;});s.proposals.push(p);
+    state.draft=null;state.draftNote="";saveShared(s);
+  }).catch(function(e){alert(e.message);});
+}
+function turnKey(id){
+  apiRead().then(function(s){
+    var p=(s.proposals||[]).find(function(x){return x.id===id;});if(!p){render();return;}
+    if(p.baseVersion!==s.committed.version){state.shared=s;render();return;}
+    p.approvals[state.role]=true;
+    if(p.approvals.A&&p.approvals.B){s.committed=Object.assign({},p.snapshot,{version:s.committed.version+1,updatedAt:Date.now(),updatedBy:state.role});s.proposals=s.proposals.filter(function(x){return x.id!==id;});}
+    saveShared(s);
+  }).catch(function(e){alert(e.message);});
+}
+function dropProposal(id){apiRead().then(function(s){s.proposals=(s.proposals||[]).filter(function(x){return x.id!==id;});saveShared(s);}).catch(function(e){alert(e.message);});}
+function createSchedule(){
+  var sd=state.setup;var next={committed:Object.assign({version:1,updatedAt:Date.now(),updatedBy:state.setupRole},sd),proposals:[]};
+  setRole(state.setupRole);state.shared=next;state.phase="main";render();apiWrite(next).catch(function(e){alert(e.message);});
+}
+
+function render(){
+  if(state.phase==="loading"){app.innerHTML='<div class="pad tiny">Loading...</div>';return;}
+  if(state.phase==="config"){app.innerHTML=configScreen();return;}
+  if(state.phase==="error"){app.innerHTML='<div class="card pad mb"><div class="note err">'+esc(state.errorMsg)+'</div><p class="tiny">Fix the values in CONFIG at the top of the file, then reload.</p></div>'+configScreen();return;}
+  if(state.phase==="setup"){app.innerHTML=setupScreen();return;}
+  app.innerHTML=mainScreen();
+}
+
+function configScreen(){
+  return '<div class="card pad">'+
+    '<h1>Set up sync (one time)</h1>'+
+    '<p class="sub">This file needs a free jsonbin.io bin to sync between two people. Takes ~10 minutes once.</p>'+
+    '<ol style="font-size:14px;line-height:1.7">'+
+      '<li>Create a free account at <b>jsonbin.io</b>.</li>'+
+      '<li>Click <b>Create Bin</b>, set the content to <code>{}</code>, make it <b>Private</b>, and <b>Save</b>. Copy the <b>Bin ID</b>.</li>'+
+      '<li>Open <b>API Keys -&gt; Access Keys -&gt; Create Access Key</b>. Give it <b>Read</b> and <b>Update</b> permission. Copy the <b>Access Key</b>.</li>'+
+      '<li>Open this file in a text editor and paste both into the <code>CONFIG</code> block at the top.</li>'+
+      '<li>Save, then host it (e.g. GitHub Pages) and share the link.</li>'+
+    '</ol>'+
+    '<div class="note">Tip: you can also test locally - just open the saved file in your browser after filling CONFIG.</div>'+
+  '</div>';
+}
+
+function setupScreen(){
+  var c=state.setup.cfg;
+  function tBtn(act,val,cur,txt){return '<button class="sm '+(cur===val?'sel':'')+'" data-act="'+act+'" data-val="'+val+'">'+esc(txt)+'</button>';}
+  return '<div class="card pad">'+
+    '<h1>'+I.key+' Set up the shared schedule</h1>'+
+    '<p class="sub">You are creating the agreed baseline. After this, any change needs <b>both</b> people to turn their key.</p>'+
+    '<div class="grid2 mb">'+
+      '<label class="f">Parent A name<input data-bind="scfg.parentAName" value="'+esc(c.parentAName)+'"></label>'+
+      '<label class="f">Parent B name<input data-bind="scfg.parentBName" value="'+esc(c.parentBName)+'"></label>'+
+    '</div>'+
+    '<div class="grid2 mb">'+
+      '<div><div class="tiny">'+esc(c.parentAName)+' fixed weekdays</div><div class="row" style="margin-top:4px">'+tBtn("setup-afixed","monTue",c.aFixedPair,"Mon/Tue")+tBtn("setup-afixed","wedThu",c.aFixedPair,"Wed/Thu")+'</div></div>'+
+      '<div><div class="tiny">First weekend (Aug 7-9 26)</div><div class="row" style="margin-top:4px">'+tBtn("setup-weekend","A",c.firstWeekendOwner,c.parentAName)+tBtn("setup-weekend","B",c.firstWeekendOwner,c.parentBName)+'</div></div>'+
+    '</div>'+
+    '<label class="f mb">Exchange time<input data-bind="scfg.exchangeTime" value="'+esc(c.exchangeTime)+'"></label>'+
+    '<div class="mb"><div class="tiny">You are</div><div class="row" style="margin-top:4px">'+tBtn("setup-role","A",state.setupRole,c.parentAName)+tBtn("setup-role","B",state.setupRole,c.parentBName)+'</div></div>'+
+    '<div class="note warn mb">Your co-parent opens this same link to claim the other key. Schedule data is visible to anyone with the link - keep it private.</div>'+
+    '<button class="primary" data-act="create">Create shared schedule</button>'+
+  '</div>';
+}
+
+function mainScreen(){
+  var s=state.shared,c=s.committed,v=viewData(),cfg=v.cfg,props=s.proposals||[];
+  var maps=buildMaps(v);
+  function eff(d){return maps.ov[dkey(d)]||baseOwner(d,cfg);}
+  function nameFor(o){return o==="A"?cfg.parentAName:cfg.parentBName;}
+  function colorFor(o){return o==="A"?cfg.aColor:cfg.bColor;}
+  var aN=0,tot=0,d=new Date(2026,7,1),e=new Date(2027,6,31);
+  while(d<=e){if(eff(d)==="A")aN++;tot++;d=new Date(+d+MS);}
+  var myName=state.role?nameFor(state.role):"";
+
+  var h='<div class="between mb">'+
+    '<div><h1>Co-Parenting Schedule</h1><div class="sub">Arlo &amp; Luna - 2026-27 - 2-2-5-5 - shared two-key app</div></div>'+
+    '<div class="row noprint"><button class="sm" data-act="sync" title="Sync">&#8635;</button><button class="sm primary" data-act="print">Print</button></div>'+
+  '</div>';
+
+  h+='<div class="row noprint mb">';
+  if(state.role){h+='<span class="pill">'+I.key+' You are <b>&nbsp;'+esc(myName)+'</b> <button class="link" data-act="switch">switch</button></span>';}
+  else{h+='<span class="tiny">Claim your key:</span><button class="sm" data-act="claim" data-val="A">'+esc(cfg.parentAName)+'</button><button class="sm" data-act="claim" data-val="B">'+esc(cfg.parentBName)+'</button>';}
+  h+='<span class="tiny">v'+c.version+' - '+(state.lastSync?"synced "+state.lastSync.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"...")+'</span></div>';
+
+  props.forEach(function(p){h+=proposalCard(p,c,cfg);});
+
+  if(state.draft){
+    var other=state.role==="A"?"B":"A";
+    h+='<div class="card pad mb info noprint">'+
+      '<div style="font-size:14px"><b>Proposal draft</b> - the calendar below previews your changes. Nothing goes live until '+esc(nameFor(other))+' turns their key.</div>'+
+      '<input style="width:100%;margin:8px 0" data-bind="note" placeholder="Add a note (e.g. Swapping Thanksgiving this year)" value="'+esc(state.draftNote)+'">'+
+      '<div class="row"><button class="go" data-act="submit">Submit &amp; turn my key</button><button data-act="cancel">Cancel</button></div>'+
+    '</div>';
+  }else{
+    h+='<div class="noprint mb"><button data-act="propose">&#9998; Propose a change</button></div>';
+  }
+
+  h+='<div class="card pad mb">'+
+    '<div class="row" style="font-size:14px;margin-bottom:8px">'+
+      '<span class="row"><span class="swatch" style="background:'+cfg.aColor+'"></span>'+esc(cfg.parentAName)+(state.role==="A"?" (you)":"")+' <span class="tiny">'+aN+'n</span></span>'+
+      '<span class="row"><span class="swatch" style="background:'+cfg.bColor+'"></span>'+esc(cfg.parentBName)+(state.role==="B"?" (you)":"")+' <span class="tiny">'+(tot-aN)+'n</span></span>'+
+      '<span class="chip">'+I.swap+' Exchange</span><span class="chip">'+I.school+' No school</span><span class="chip">'+I.star+' Activity</span><span class="chip">'+I.gift+' Special</span>'+
+    '</div>'+
+    '<div class="tiny">'+esc(cfg.parentAName)+' has '+(cfg.aFixedPair==="monTue"?"Mon-Tue":"Wed-Thu")+', '+esc(cfg.parentBName)+' has '+(cfg.aFixedPair==="monTue"?"Wed-Thu":"Mon-Tue")+', weekends alternate. Exchanges '+esc(cfg.exchangeTime.toLowerCase())+'. No-school days = official MPS 2026-27 (Burroughs &amp; Justice Page).</div>'+
+  '</div>';
+
+  if(state.draft)h+=draftEditors(v);
+
+  MONTHS.forEach(function(mo){h+=monthHTML(mo.y,mo.m,cfg,eff,colorFor,v.activities,maps.sp,maps.hl);});
+
+  h+='<p class="tiny" style="text-align:center;margin-top:18px">Two-key shared schedule - changes need both people to turn their key. Data syncs via your private bin and is visible to anyone with the link.</p>';
+  return h;
+}
+
+function proposalCard(p,committed,cfg){
+  var stale=p.baseVersion!==committed.version;
+  var changes=summarize(committed,p.snapshot);
+  var mine=p.author===state.role,other=p.author==="A"?"B":"A";
+  function nm(o){return o==="A"?cfg.parentAName:cfg.parentBName;}
+  function kc(who){return '<span class="keychip '+(p.approvals[who]?"kon":"koff")+'">'+I.key+' '+esc(nm(who))+' '+(p.approvals[who]?"- turned":"- waiting")+'</span>';}
+  var body;
+  if(stale)body='<div class="note warn">The schedule changed since this was proposed. '+(mine?"Withdraw and redo it.":"Ask them to re-propose.")+' '+(mine?'<button class="sm" data-act="drop" data-id="'+p.id+'">Withdraw</button>':"")+'</div>';
+  else if(mine)body='<div class="row"><span class="tiny">Waiting for '+esc(nm(other))+' to turn their key.</span><button class="sm" data-act="drop" data-id="'+p.id+'">Withdraw</button></div>';
+  else body='<div class="row"><button class="ok sm" data-act="approve" data-id="'+p.id+'">'+I.key+' Turn my key &amp; approve</button><button class="sm" data-act="drop" data-id="'+p.id+'">Reject</button></div>';
+  return '<div class="card pad mb noprint" '+(stale?'style="background:#fffbeb;border-color:#fde68a"':"")+'>'+
+    '<div class="between"><span style="font-size:14px"><b>'+esc(nm(p.author))+' proposed a change</b></span><span class="row">'+kc("A")+kc("B")+'</span></div>'+
+    (p.note?'<div class="tiny" style="font-style:italic;margin-top:4px">"'+esc(p.note)+'"</div>':"")+
+    '<ul class="changes">'+(changes.length?changes.map(function(c){return "<li>"+c+"</li>";}).join(""):'<li style="list-style:none;color:#9ca3af">No visible changes</li>')+'</ul>'+
+    body+
+  '</div>';
+}
+
+function section(secKey,title,iconSvg,inner,addAct){
+  var open=state.open[secKey];
+  return '<div class="card mb noprint">'+
+    '<button style="width:100%;display:flex;justify-content:space-between;border:none;background:none;padding:12px 14px;font-weight:600;font-size:14px" data-act="toggle" data-sec="'+secKey+'"><span>'+iconSvg+' '+esc(title)+'</span><span>'+(open?"&#9662;":"&#9656;")+'</span></button>'+
+    (open?'<div class="pad" style="padding-top:0">'+inner+'<div style="margin-top:6px"><button class="link" data-act="'+addAct+'">+ Add</button></div></div>':"")+
+  '</div>';
+}
+function draftEditors(v){
+  var c=v.cfg;
+  function tBtn(act,val,cur,txt){return '<button class="sm '+(cur===val?"sel":"")+'" data-act="'+act+'" data-val="'+val+'">'+esc(txt)+'</button>';}
+  var h="";
+  var so=state.open.settings;
+  h+='<div class="card mb noprint">'+
+    '<button style="width:100%;display:flex;justify-content:space-between;border:none;background:none;padding:12px 14px;font-weight:600;font-size:14px" data-act="toggle" data-sec="settings"><span>&#9881; Pattern, names &amp; colors</span><span>'+(so?"&#9662;":"&#9656;")+'</span></button>'+
+    (so?'<div class="pad" style="padding-top:0">'+
+      '<div class="grid2 mb"><label class="f">'+esc(c.parentAName)+' name<input data-bind="cfg.parentAName" value="'+esc(c.parentAName)+'"></label><label class="f">'+esc(c.parentBName)+' name<input data-bind="cfg.parentBName" value="'+esc(c.parentBName)+'"></label></div>'+
+      '<div class="grid2 mb"><div><div class="tiny">'+esc(c.parentAName)+' fixed days</div><div class="row" style="margin-top:4px">'+tBtn("dft-afixed","monTue",c.aFixedPair,"Mon/Tue")+tBtn("dft-afixed","wedThu",c.aFixedPair,"Wed/Thu")+'</div></div><div><div class="tiny">First weekend owner</div><div class="row" style="margin-top:4px">'+tBtn("dft-weekend","A",c.firstWeekendOwner,c.parentAName)+tBtn("dft-weekend","B",c.firstWeekendOwner,c.parentBName)+'</div></div></div>'+
+      '<div class="grid3"><label class="f">Exchange time<input data-bind="cfg.exchangeTime" value="'+esc(c.exchangeTime)+'"></label><label class="f">'+esc(c.parentAName)+' color<input type="color" data-bind="cfg.aColor" value="'+c.aColor+'"></label><label class="f">'+esc(c.parentBName)+' color<input type="color" data-bind="cfg.bColor" value="'+c.bColor+'"></label></div>'+
+    '</div>':"")+
+  '</div>';
+  var ai=v.activities.length?"":'<div class="tiny">Add Arlo and Luna weekly activities.</div>';
+  v.activities.forEach(function(a){ai+='<div class="row" style="margin-bottom:6px"><input style="flex:1" data-bind="act.label" data-id="'+a.id+'" value="'+esc(a.label)+'"><select data-bind="act.weekday" data-id="'+a.id+'">'+DOW.map(function(dn,wi){return '<option value="'+wi+'" '+(a.weekday===wi?"selected":"")+'>'+dn+'</option>';}).join("")+'</select><button class="del" data-act="del-act" data-id="'+a.id+'">&#10005;</button></div>';});
+  h+=section("act","Recurring activities",I.star,ai,"add-act");
+  var si="";v.special.forEach(function(sp){si+='<div class="row" style="margin-bottom:6px"><input type="date" min="2026-08-01" max="2027-07-31" data-bind="spec.date" data-id="'+sp.id+'" value="'+esc(sp.date)+'"><input style="flex:1" data-bind="spec.label" data-id="'+sp.id+'" value="'+esc(sp.label)+'"><button class="del" data-act="del-spec" data-id="'+sp.id+'">&#10005;</button></div>';});
+  h+=section("spec","Special dates",I.gift,si,"add-spec");
+  var hi='<div class="note" style="margin-bottom:8px">Set "who has them" to override the rotation for any break.</div>';
+  v.holidays.forEach(function(x){hi+='<div class="row" style="margin-bottom:6px"><input type="date" data-bind="hol.start" data-id="'+x.id+'" value="'+esc(x.start)+'"><span class="tiny">-&gt;</span><input type="date" data-bind="hol.end" data-id="'+x.id+'" value="'+esc(x.end)+'"><input style="flex:1;min-width:110px" data-bind="hol.label" data-id="'+x.id+'" value="'+esc(x.label)+'"><select data-bind="hol.owner" data-id="'+x.id+'"><option value="rotation" '+(x.owner==="rotation"?"selected":"")+'>Normal rotation</option><option value="A" '+(x.owner==="A"?"selected":"")+'>'+esc(c.parentAName)+'</option><option value="B" '+(x.owner==="B"?"selected":"")+'>'+esc(c.parentBName)+'</option></select><button class="del" data-act="del-hol" data-id="'+x.id+'">&#10005;</button></div>';});
+  h+=section("hol","No-school days &amp; holiday ownership",I.school,hi,"add-hol");
+  return h;
+}
+
+function monthHTML(y,m,cfg,eff,colorFor,acts,spMap,hlMap){
+  var startPad=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
+  var cells=[],i;for(i=0;i<startPad;i++)cells.push(null);for(i=1;i<=days;i++)cells.push(new Date(y,m,i));while(cells.length%7)cells.push(null);
+  var g="";
+  cells.forEach(function(d){
+    if(!d){g+='<div class="empty"></div>';return;}
+    var owner=eff(d),prev=new Date(+d-MS),isEx=dkey(prev)>="2026-08-01"&&eff(prev)!==owner;
+    var k=dkey(d),a=acts.filter(function(x){return x.weekday===d.getDay();}),sp=spMap[k]||[],hl=hlMap[k]||[],ns=hl.length>0,col=colorFor(owner);
+    var tip=[owner==="A"?cfg.parentAName:cfg.parentBName,isEx?"Exchange":"",ns?"No school: "+hl.join(", "):""].concat(a.map(function(x){return x.label;})).concat(sp).filter(Boolean).join(" - ");
+    g+='<div class="cell '+(ns?"noschool":"")+'" title="'+esc(tip)+'" style="background:'+rgba(col,.14)+'">'+
+      '<div class="acc" style="background:'+col+'"></div>'+
+      '<div class="top"><span>'+d.getDate()+'</span><span class="row" style="gap:2px">'+(ns?I.school:"")+(isEx?I.swap:"")+'</span></div>'+
+      (ns?'<div class="hl">'+esc(hl[0])+'</div>':"")+
+      '<div class="ics">'+a.map(function(){return I.star;}).join("")+sp.map(function(){return '<span style="color:#e11d48">'+I.gift+'</span>';}).join("")+'</div>'+
+    '</div>';
+  });
+  return '<div class="card month mb"><div class="mhead"><h2>'+MN[m]+' '+y+'</h2></div><div class="dow">'+DOW.map(function(dn){return "<div>"+dn+"</div>";}).join("")+'</div><div class="cells">'+g+'</div></div>';
+}
+
+app.addEventListener("click",function(e){
+  var b=e.target.closest("[data-act]");if(!b)return;
+  var act=b.getAttribute("data-act"),val=b.getAttribute("data-val"),id=b.getAttribute("data-id");
+  if(act==="claim")setRole(val);
+  else if(act==="switch")setRole(state.role==="A"?"B":"A");
+  else if(act==="sync")syncNow();
+  else if(act==="print")window.print();
+  else if(act==="propose")startProposal();
+  else if(act==="cancel")cancelDraft();
+  else if(act==="submit")submitProposal();
+  else if(act==="approve")turnKey(id);
+  else if(act==="drop")dropProposal(id);
+  else if(act==="create")createSchedule();
+  else if(act==="setup-afixed"){state.setup.cfg.aFixedPair=val;render();}
+  else if(act==="setup-weekend"){state.setup.cfg.firstWeekendOwner=val;render();}
+  else if(act==="setup-role"){state.setupRole=val;render();}
+  else if(act==="toggle"){var sec=b.getAttribute("data-sec");state.open[sec]=!state.open[sec];render();}
+  else if(act==="dft-afixed"){state.draft.cfg.aFixedPair=val;render();}
+  else if(act==="dft-weekend"){state.draft.cfg.firstWeekendOwner=val;render();}
+  else if(act==="add-act"){state.draft.activities.push({id:"a"+Date.now(),label:"New activity",weekday:1});render();}
+  else if(act==="del-act"){state.draft.activities=state.draft.activities.filter(function(x){return x.id!==id;});render();}
+  else if(act==="add-spec"){state.draft.special.push({id:"s"+Date.now(),date:"",label:"New date"});render();}
+  else if(act==="del-spec"){state.draft.special=state.draft.special.filter(function(x){return x.id!==id;});render();}
+  else if(act==="add-hol"){state.draft.holidays.push({id:"h"+Date.now(),start:"",end:"",label:"New no-school day",owner:"rotation"});render();}
+  else if(act==="del-hol"){state.draft.holidays=state.draft.holidays.filter(function(x){return x.id!==id;});render();}
+});
+function applyBind(bind,id,val,doRender){
+  var d=state.draft,s=state.setup;
+  if(bind==="note"){state.draftNote=val;return;}
+  if(bind.indexOf("scfg.")===0&&s){s.cfg[bind.slice(5)]=val;}
+  else if(bind.indexOf("cfg.")===0&&d){d.cfg[bind.slice(4)]=val;}
+  else if(d){
+    var fld=bind.split(".")[1],x;
+    if(bind.indexOf("act.")===0){x=d.activities.find(function(z){return z.id===id;});if(x)x[fld]=fld==="weekday"?+val:val;}
+    else if(bind.indexOf("spec.")===0){x=d.special.find(function(z){return z.id===id;});if(x)x[fld]=val;}
+    else if(bind.indexOf("hol.")===0){x=d.holidays.find(function(z){return z.id===id;});if(x){x[fld]=val;if(fld==="start"&&x.end<val)x.end=val;}}
+  }
+  if(doRender)render();
+}
+app.addEventListener("input",function(e){var el=e.target;var bind=el.getAttribute&&el.getAttribute("data-bind");if(bind)applyBind(bind,el.getAttribute("data-id"),el.value,false);});
+app.addEventListener("change",function(e){var el=e.target;var bind=el.getAttribute&&el.getAttribute("data-bind");if(!bind)return;var type=el.type;if(el.tagName==="SELECT"||type==="date"||type==="color")applyBind(bind,el.getAttribute("data-id"),el.value,true);});
+
+init();
+</script>
+</body>
+</html>
